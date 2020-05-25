@@ -20,6 +20,7 @@ namespace Grampys_Shopping_List
         private List<Item> availableItems = new List<Item>();
         private bool unsaved = true;
         private List<ShoppingListItem> shoppingListItems = new List<ShoppingListItem>();
+        public decimal TaxRate = 0.0825M;
 
         public frmMain()
         {
@@ -104,7 +105,7 @@ namespace Grampys_Shopping_List
         {
             if(itemView.SelectedItems.Count == 0)
             {
-                MessageBox.Show("Oops you forgot to select and item!");
+                MessageBox.Show("Oops you forgot to select an item!");
             }
             else
             {
@@ -135,6 +136,8 @@ namespace Grampys_Shopping_List
 
         private void UpdateShoppingListItems()
         {
+            decimal subtotal = 0M;
+            decimal tax = 0M;
             shoppingList.View = View.Details;
             shoppingList.Items.Clear();
 
@@ -151,6 +154,19 @@ namespace Grampys_Shopping_List
                 string itemQuanity = item.Quanity.ToString();
                 string itemPrice = @String.Format("{0:C}", item.SetTotalPrice());
                 shoppingList.Items.Add(new ListViewItem(new string[] { itemName, itemQuanity, itemPrice }));
+                subtotal += item.SetTotalPrice();
+                if(item.item.Taxable)
+                {
+                    tax += item.SetTotalPrice() * TaxRate;
+                }
+            }
+
+            //TODO: add sub total, Tax, and Total
+            if (shoppingList.Items.Count >= 1)
+            {
+                shoppingList.Items.Add(new ListViewItem(new string[] { "", "Sub-Total", String.Format("{0:C}", subtotal) }));
+                shoppingList.Items.Add(new ListViewItem(new string[] { "", "Tax (" + TaxRate + ")", String.Format("{0:C}", tax) }));
+                shoppingList.Items.Add(new ListViewItem(new string[] { "", "Total", String.Format("{0:C}", subtotal + tax) }));
             }
 
             if (shoppingList.Items.Count > 0)
@@ -165,6 +181,7 @@ namespace Grampys_Shopping_List
             shoppingList.Columns[1].TextAlign = HorizontalAlignment.Right;
             shoppingList.Columns[2].AutoResize(ColumnHeaderAutoResizeStyle.HeaderSize);
             shoppingList.Columns[2].TextAlign = HorizontalAlignment.Right;
+
         }
 
         private void newShoppingListToolStripMenuItem_Click(object sender, EventArgs e)

@@ -27,7 +27,7 @@ namespace CommonLib
             Quanity--;
         }
 
-        public double SetTotalPrice()
+        public decimal SetTotalPrice()
         {
             return item.Price * Quanity;
         }

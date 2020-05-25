@@ -52,7 +52,7 @@ namespace CommonLib
                         }
                         else if (col == 2)
                         {
-                            newItem.Price = double.Parse(temp);
+                            newItem.Price = decimal.Parse(temp);
                         }
                         else if (col == 3)
                         {

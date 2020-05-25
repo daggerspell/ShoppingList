@@ -59,7 +59,7 @@
             this.dataImportToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(644, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(1059, 24);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -183,13 +183,13 @@
             this.itemView.Location = new System.Drawing.Point(0, 24);
             this.itemView.MultiSelect = false;
             this.itemView.Name = "itemView";
-            this.itemView.Size = new System.Drawing.Size(278, 575);
+            this.itemView.Size = new System.Drawing.Size(343, 759);
             this.itemView.TabIndex = 3;
             this.itemView.UseCompatibleStateImageBehavior = false;
             // 
             // btnAddToList
             // 
-            this.btnAddToList.Location = new System.Drawing.Point(284, 164);
+            this.btnAddToList.Location = new System.Drawing.Point(431, 159);
             this.btnAddToList.Name = "btnAddToList";
             this.btnAddToList.Size = new System.Drawing.Size(75, 49);
             this.btnAddToList.TabIndex = 5;
@@ -199,7 +199,7 @@
             // 
             // btnRemoveFromList
             // 
-            this.btnRemoveFromList.Location = new System.Drawing.Point(284, 312);
+            this.btnRemoveFromList.Location = new System.Drawing.Point(431, 351);
             this.btnRemoveFromList.Name = "btnRemoveFromList";
             this.btnRemoveFromList.Size = new System.Drawing.Size(75, 64);
             this.btnRemoveFromList.TabIndex = 6;
@@ -211,10 +211,10 @@
             // 
             this.shoppingList.Dock = System.Windows.Forms.DockStyle.Right;
             this.shoppingList.HideSelection = false;
-            this.shoppingList.Location = new System.Drawing.Point(366, 24);
+            this.shoppingList.Location = new System.Drawing.Point(595, 24);
             this.shoppingList.MultiSelect = false;
             this.shoppingList.Name = "shoppingList";
-            this.shoppingList.Size = new System.Drawing.Size(278, 575);
+            this.shoppingList.Size = new System.Drawing.Size(464, 759);
             this.shoppingList.TabIndex = 7;
             this.shoppingList.UseCompatibleStateImageBehavior = false;
             // 
@@ -222,7 +222,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(644, 599);
+            this.ClientSize = new System.Drawing.Size(1059, 783);
             this.Controls.Add(this.shoppingList);
             this.Controls.Add(this.btnRemoveFromList);
             this.Controls.Add(this.btnAddToList);

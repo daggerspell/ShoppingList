@@ -12,7 +12,7 @@ namespace CommonLib
     
         public string Name;
         public string Description;
-        public double Price;
+        public decimal Price;
         public bool Taxable;
         public string IsleLocation;
         
@@ -20,7 +20,7 @@ namespace CommonLib
         {
         }
 
-        public Item(string itemName, string itemDescript, double price, bool tax, string isleInfo )
+        public Item(string itemName, string itemDescript, decimal price, bool tax, string isleInfo )
         {
             Name = itemName;
             Description = itemDescript;
