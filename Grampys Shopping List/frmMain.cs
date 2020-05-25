@@ -29,7 +29,19 @@ namespace Grampys_Shopping_List
             UpdateShoppingListItems();
         }
 
-       
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            if (unsaved)
+            {
+                //Needs to be a dialog to block and ecept a yes or no answer
+                DialogResult results = MessageBox.Show("You shopping List is unsaved! Are you sure you want to exit?", "Shopping List", MessageBoxButtons.YesNo);
+                if (results == DialogResult.No)
+                {
+                    //Call the save dialog and once saved exit
+                    MessageBox.Show("Okay please save your work", "Shopping List");
+                }
+            }
+        }
 
         private void updateAvailableItems()
         {
@@ -85,13 +97,7 @@ namespace Grampys_Shopping_List
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //TODO: add check to see if current shopping list is saved
-            if (unsaved)
-            {
-                //Needs to be a dialog to block and ecept a yes or no answer
-                MessageBox.Show("You shopping List is unsaved!", "Unsaved Work");
-            }
-            Application.Exit();
+            Application.Exit();            
         }
 
         private void btnAddToList_Click(object sender, EventArgs e)
