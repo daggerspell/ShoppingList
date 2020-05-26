@@ -28,15 +28,14 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMain));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newShoppingListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openShoppingListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.closeShoppingListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSave = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.printOrShareShoppingListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.printShoppingListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.emailShoppingListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.addNewItemToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editItemToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -49,6 +48,8 @@
             this.btnAddToList = new System.Windows.Forms.Button();
             this.btnRemoveFromList = new System.Windows.Forms.Button();
             this.shoppingList = new System.Windows.Forms.ListView();
+            this.printDoc = new System.Drawing.Printing.PrintDocument();
+            this.previewDialog = new System.Windows.Forms.PrintPreviewDialog();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -68,7 +69,7 @@
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.newShoppingListToolStripMenuItem,
             this.openShoppingListToolStripMenuItem,
-            this.closeShoppingListToolStripMenuItem,
+            this.toolStripSave,
             this.toolStripSeparator1,
             this.printOrShareShoppingListToolStripMenuItem,
             this.toolStripSeparator2,
@@ -84,80 +85,71 @@
             // newShoppingListToolStripMenuItem
             // 
             this.newShoppingListToolStripMenuItem.Name = "newShoppingListToolStripMenuItem";
-            this.newShoppingListToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
+            this.newShoppingListToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.newShoppingListToolStripMenuItem.Text = "&New Shopping List";
             this.newShoppingListToolStripMenuItem.Click += new System.EventHandler(this.newShoppingListToolStripMenuItem_Click);
             // 
             // openShoppingListToolStripMenuItem
             // 
             this.openShoppingListToolStripMenuItem.Name = "openShoppingListToolStripMenuItem";
-            this.openShoppingListToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
+            this.openShoppingListToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.openShoppingListToolStripMenuItem.Text = "&Open Shopping List";
+            this.openShoppingListToolStripMenuItem.Click += new System.EventHandler(this.openShoppingListToolStripMenuItem_Click);
             // 
-            // closeShoppingListToolStripMenuItem
+            // toolStripSave
             // 
-            this.closeShoppingListToolStripMenuItem.Name = "closeShoppingListToolStripMenuItem";
-            this.closeShoppingListToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
-            this.closeShoppingListToolStripMenuItem.Text = "Close Shopping List";
+            this.toolStripSave.Name = "toolStripSave";
+            this.toolStripSave.Size = new System.Drawing.Size(180, 22);
+            this.toolStripSave.Text = "Save Shopping List";
+            this.toolStripSave.Click += new System.EventHandler(this.ToolStripMenuSave_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(217, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
             // 
             // printOrShareShoppingListToolStripMenuItem
             // 
-            this.printOrShareShoppingListToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.printShoppingListToolStripMenuItem,
-            this.emailShoppingListToolStripMenuItem});
             this.printOrShareShoppingListToolStripMenuItem.Name = "printOrShareShoppingListToolStripMenuItem";
-            this.printOrShareShoppingListToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
-            this.printOrShareShoppingListToolStripMenuItem.Text = "Print or Share Shopping List";
-            // 
-            // printShoppingListToolStripMenuItem
-            // 
-            this.printShoppingListToolStripMenuItem.Name = "printShoppingListToolStripMenuItem";
-            this.printShoppingListToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
-            this.printShoppingListToolStripMenuItem.Text = "&Print Shopping List";
-            // 
-            // emailShoppingListToolStripMenuItem
-            // 
-            this.emailShoppingListToolStripMenuItem.Name = "emailShoppingListToolStripMenuItem";
-            this.emailShoppingListToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
-            this.emailShoppingListToolStripMenuItem.Text = "Email Shopping List";
+            this.printOrShareShoppingListToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.printOrShareShoppingListToolStripMenuItem.Text = "&Print Shopping List";
+            this.printOrShareShoppingListToolStripMenuItem.Click += new System.EventHandler(this.printOrShareShoppingListToolStripMenuItem_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(217, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(177, 6);
             // 
             // addNewItemToolStripMenuItem
             // 
             this.addNewItemToolStripMenuItem.Name = "addNewItemToolStripMenuItem";
-            this.addNewItemToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
+            this.addNewItemToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.addNewItemToolStripMenuItem.Text = "Add Item";
+            this.addNewItemToolStripMenuItem.Click += new System.EventHandler(this.addNewItemToolStripMenuItem_Click);
             // 
             // editItemToolStripMenuItem
             // 
             this.editItemToolStripMenuItem.Name = "editItemToolStripMenuItem";
-            this.editItemToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
+            this.editItemToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.editItemToolStripMenuItem.Text = "Edit Item";
+            this.editItemToolStripMenuItem.Click += new System.EventHandler(this.editItemToolStripMenuItem_Click);
             // 
             // removeItemToolStripMenuItem
             // 
             this.removeItemToolStripMenuItem.Name = "removeItemToolStripMenuItem";
-            this.removeItemToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
+            this.removeItemToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.removeItemToolStripMenuItem.Text = "Remove Item";
+            this.removeItemToolStripMenuItem.Click += new System.EventHandler(this.removeItemToolStripMenuItem_Click);
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(217, 6);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(177, 6);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.exitToolStripMenuItem.Text = "E&xit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -218,6 +210,20 @@
             this.shoppingList.TabIndex = 7;
             this.shoppingList.UseCompatibleStateImageBehavior = false;
             // 
+            // printDoc
+            // 
+            this.printDoc.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(this.printDoc_PrintPage);
+            // 
+            // previewDialog
+            // 
+            this.previewDialog.AutoScrollMargin = new System.Drawing.Size(0, 0);
+            this.previewDialog.AutoScrollMinSize = new System.Drawing.Size(0, 0);
+            this.previewDialog.ClientSize = new System.Drawing.Size(400, 300);
+            this.previewDialog.Enabled = true;
+            this.previewDialog.Icon = ((System.Drawing.Icon)(resources.GetObject("previewDialog.Icon")));
+            this.previewDialog.Name = "previewDialog";
+            this.previewDialog.Visible = false;
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -248,11 +254,8 @@
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem newShoppingListToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openShoppingListToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem closeShoppingListToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem printOrShareShoppingListToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem printShoppingListToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem emailShoppingListToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem addNewItemToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem editItemToolStripMenuItem;
@@ -261,6 +264,9 @@
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.Button btnRemoveFromList;
         private System.Windows.Forms.ListView shoppingList;
+        private System.Windows.Forms.ToolStripMenuItem toolStripSave;
+        private System.Drawing.Printing.PrintDocument printDoc;
+        private System.Windows.Forms.PrintPreviewDialog previewDialog;
     }
 }
 

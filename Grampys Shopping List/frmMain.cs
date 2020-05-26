@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Printing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -20,6 +22,7 @@ namespace Grampys_Shopping_List
         private List<Item> availableItems = new List<Item>();
         private bool unsaved = true;
         private List<ShoppingListItem> shoppingListItems = new List<ShoppingListItem>();
+        private List<ShoppingListItem> remainingToPrint = new List<ShoppingListItem>();
         public decimal TaxRate = 0.0825M;
 
         public frmMain()
@@ -34,12 +37,11 @@ namespace Grampys_Shopping_List
         {
             if (unsaved)
             {
-                //Needs to be a dialog to block and ecept a yes or no answer
+                //Needs to be a dialog to block
                 DialogResult results = MessageBox.Show("You shopping List is unsaved! Are you sure you want to exit?", "Shopping List", MessageBoxButtons.YesNo);
                 if (results == DialogResult.No)
                 {
-                    //Call the save dialog and once saved exit
-                    MessageBox.Show("Okay please save your work", "Shopping List");
+                    ToolStripMenuSave_Click(this, e);
                 }
             }
         }
@@ -182,13 +184,26 @@ namespace Grampys_Shopping_List
             shoppingList.Columns[2].AutoResize(ColumnHeaderAutoResizeStyle.HeaderSize);
             shoppingList.Columns[2].TextAlign = HorizontalAlignment.Right;
 
+            remainingToPrint.Clear();
+            remainingToPrint.AddRange(shoppingListItems);
+
         }
 
         private void newShoppingListToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (unsaved)
             {
-                MessageBox.Show("shopping List is unsaved");
+                DialogResult result = MessageBox.Show("Would you like to save the current shopping list", "Unsaved Shopping List",MessageBoxButtons.YesNo);
+                if(result == DialogResult.Yes)
+                {
+                    ToolStripMenuSave_Click(sender, e);
+                }
+                else if (result == DialogResult.No)
+                {
+                    unsaved = true;
+                    shoppingListItems.Clear();
+                    shoppingList.Items.Clear();
+                }
             }
             else
             {
@@ -219,6 +234,258 @@ namespace Grampys_Shopping_List
             UpdateShoppingListItems();
 
             unsaved = true;
+        }
+
+        private void addNewItemToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ItemForm itemForm = new ItemForm("Add");
+            DialogResult dialogResult = itemForm.ShowDialog();
+            if(dialogResult == DialogResult.OK)
+            {
+                //Add Item
+                databaseConnector.InsertNewItem(itemForm.currentItem);
+                availableItems.Add(itemForm.currentItem);
+                updateAvailableItems();
+            }
+        }
+
+        private void editItemToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if(itemView.SelectedItems.Count <= 0)
+            {
+                MessageBox.Show("No item selected");
+                return;
+            }
+            else
+            {
+                ItemForm itemForm = new ItemForm("Edit", availableItems[itemView.SelectedIndices[0]]);
+                DialogResult dialogResult = itemForm.ShowDialog();
+                if(dialogResult == DialogResult.OK)
+                {
+                    //TODO: update database record
+                    databaseConnector.UpdateRecord(itemForm.currentItem);
+                    updateAvailableItems();
+                }
+            }
+        }
+
+        private void removeItemToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (itemView.SelectedItems.Count <= 0)
+            {
+                MessageBox.Show("No item selected");
+                return;
+            }
+            else
+            {
+
+                DialogResult dialogResult = MessageBox.Show("Are you sure you want to remove " + availableItems[itemView.SelectedIndices[0]].Name + " from database?", "Remove Item", MessageBoxButtons.YesNo);
+                if (dialogResult == DialogResult.Yes)
+                {
+                    //TODO: update database record
+                    databaseConnector.RemoveRecord(availableItems[itemView.SelectedIndices[0]]);
+                    updateAvailableItems();
+                }
+            }
+        }
+
+        private void printOrShareShoppingListToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            previewDialog.Document = this.printDoc;
+            DialogResult results = previewDialog.ShowDialog();
+            if (results == DialogResult.OK)
+                previewDialog.Close();
+        }
+
+        private int[] FindColumnWidths(Graphics gr, Font headerFont, Font bodyFont, string [] headers, List<ShoppingListItem> values)
+        {
+            int[] widths = new int[headers.Length];
+
+            for (int col = 0; col < widths.Length; col++)
+            {
+                widths[col] = (int)gr.MeasureString(headers[col], headerFont).Width;
+
+                for (int row = 0; row < values.Count; row++)
+                {
+                    int valueWidth = 0;
+                    switch (col)
+                    {
+                        case 0:
+                            valueWidth = (int)gr.MeasureString(values[row].item.Name, bodyFont).Width;
+                            break;
+                        case 1:
+                            valueWidth = (int)gr.MeasureString(values[row].Quanity.ToString(), bodyFont).Width;
+                            break;
+                        case 2:
+                            valueWidth = (int)gr.MeasureString(String.Format("{0:C}", values[row].SetTotalPrice()), bodyFont).Width;
+                            break;
+                    }                    
+                    if (widths[col] < valueWidth)
+                        widths[col] = valueWidth;
+                }
+                widths[col] += 20;
+            }
+            return widths;
+        }
+
+        private void printDoc_PrintPage(object sender, PrintPageEventArgs e)
+        {
+            string[] newHeaders = new string[] { "Item Name", "Quantity", "Item Price" };
+
+            using (Font headerFont = new Font("Times New Roman", 16, FontStyle.Bold))
+            {
+                using (Font bodyFont = new Font("Times New Roman", 12))
+                {
+                    int lineSpacing = 20;
+
+                    int[] column_widths = FindColumnWidths(e.Graphics, headerFont, bodyFont, newHeaders, remainingToPrint);
+
+                    int x = e.MarginBounds.Left;
+                    float pageHeight = e.MarginBounds.Height;
+                    int col = 0;
+                    int y = e.MarginBounds.Top;
+
+                    ///TODO: Print the column headers
+                    for (col = 0; col < 3; col++)
+                    {
+                        if (col == 2)
+                        {
+                            int testing = (int)e.Graphics.MeasureString(newHeaders[col], headerFont).Width;
+                            e.Graphics.DrawString(newHeaders[col], headerFont, Brushes.Black, x + (column_widths[col] - testing), y);
+                        }
+                        else
+                        {
+                            e.Graphics.DrawString(newHeaders[col], headerFont, Brushes.Black, x, y);
+                        }
+                        x += column_widths[col];
+                    }
+
+                    y += 20;
+                    int index = 0;
+                    while (index < remainingToPrint.Count)
+                    //foreach (ShoppingListItem item in remainingToPrint)
+                    {
+                        y += lineSpacing;
+                        x = e.MarginBounds.Left;
+                        if (y + lineSpacing >= pageHeight && remainingToPrint.Count > 0)
+                        {
+                            e.HasMorePages = true;
+                            return;
+                        }
+                        else
+                        {
+                            int testing = (int)e.Graphics.MeasureString(String.Format("{0:C}", remainingToPrint[index].SetTotalPrice()), bodyFont).Width;
+                            e.Graphics.DrawString(remainingToPrint[index].item.Name, bodyFont, Brushes.Black, x, y);
+                            x += column_widths[0];
+                            e.Graphics.DrawString(remainingToPrint[index].Quanity.ToString(), bodyFont, Brushes.Black, x + (int)(column_widths[1] / 2), y);
+                            x += column_widths[1];
+                            e.Graphics.DrawString(String.Format("{0:C}", remainingToPrint[index].SetTotalPrice()), bodyFont, Brushes.Black, x + (column_widths[2] - testing), y);
+                            remainingToPrint.RemoveAt(index);
+                        }
+
+                        if (remainingToPrint.Count <= 0)
+                        {
+                            //Add subtotal, tax, and total
+                            decimal subtotal = 0M;
+                            decimal tax = 0M;
+                            foreach (ShoppingListItem item in shoppingListItems)
+                            {
+                                subtotal += item.SetTotalPrice();
+                                if (item.item.Taxable)
+                                    tax += item.SetTotalPrice() * TaxRate;
+                            }
+                            x = e.MarginBounds.Left + (column_widths[0]);
+                            y += lineSpacing;
+                            int testing = (int)e.Graphics.MeasureString(String.Format("{0:C}", subtotal), bodyFont).Width;
+                            e.Graphics.DrawString("Subtotal:", bodyFont, Brushes.Black, x + (int)(column_widths[1] / 2), y);
+                            x += column_widths[1];
+                            e.Graphics.DrawString(String.Format("{0:C}", subtotal), bodyFont, Brushes.Black, x + (column_widths[2] - testing), y);
+
+                            x = e.MarginBounds.Left + (column_widths[0]);
+                            y += lineSpacing;
+                            testing = (int)e.Graphics.MeasureString(String.Format("{0:C}", tax), bodyFont).Width;
+                            e.Graphics.DrawString("Tax (8.25%):", bodyFont, Brushes.Black, x + (int)(column_widths[1] / 2), y);
+                            x += column_widths[1];
+                            e.Graphics.DrawString(String.Format("{0:C}", tax), bodyFont, Brushes.Black, x + (column_widths[2] - testing), y);
+
+                            x = e.MarginBounds.Left + (column_widths[0]);
+                            y += lineSpacing;
+                            testing = (int)e.Graphics.MeasureString(String.Format("{0:C}", subtotal + tax), bodyFont).Width;
+                            e.Graphics.DrawString("Total:", bodyFont, Brushes.Black, x + (int)(column_widths[1] / 2), y);
+                            x += column_widths[1];
+                            e.Graphics.DrawString(String.Format("{0:C}", subtotal + tax), bodyFont, Brushes.Black, x + (column_widths[2] - testing), y);
+
+                        }
+                    }
+                }
+            }
+        }
+
+        private void ToolStripMenuSave_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "CSV File|*.csv";
+            saveFileDialog.Title = "Save Shopping List";
+            saveFileDialog.ShowDialog();
+
+            if(saveFileDialog.FileName != "")
+            {
+                FileStream fs = (FileStream)saveFileDialog.OpenFile();
+                StringBuilder csvOutput = new StringBuilder();
+
+                csvOutput.AppendLine("Item Name,Quantity,Total Item Price");
+
+                foreach (ShoppingListItem item in shoppingListItems)
+                {
+                    csvOutput.AppendLine(item.item.Name + "," + item.Quanity.ToString() + "," + item.SetTotalPrice().ToString());
+                }
+
+                fs.Write(new UTF8Encoding().GetBytes(csvOutput.ToString()), 0, new UTF8Encoding().GetByteCount(csvOutput.ToString()));
+
+                fs.Flush();
+                fs.Close();
+
+                unsaved = false;
+            }
+        }
+
+        private void openShoppingListToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "CSV File|*.csv";
+            openFileDialog.Title = "Open Shopping List";
+
+            openFileDialog.ShowDialog();
+
+            if(openFileDialog.FileName != "")
+            {
+                List<ShoppingListItem> shoppingListInput = new List<ShoppingListItem>();
+
+                string[] lines = File.ReadAllLines(openFileDialog.FileName);
+
+                foreach (string line in lines)
+                {
+                    string[] spiltLine = line.Split(',');
+                    //TODO: verify that the item is in available Items
+                    foreach (Item item in availableItems)
+                    {
+                        if(spiltLine[0] == item.Name)
+                        {
+                            shoppingListInput.Add(new ShoppingListItem(item, int.Parse(spiltLine[1])));
+                            break;
+                        }
+                    }
+                }
+
+                shoppingListItems.Clear();
+                shoppingListItems.AddRange(shoppingListInput);
+
+                UpdateShoppingListItems();
+
+                unsaved = false;
+            }
+
+
         }
     }
 }
