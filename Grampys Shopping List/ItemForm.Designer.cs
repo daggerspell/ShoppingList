@@ -28,13 +28,14 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ItemForm));
             this.label1 = new System.Windows.Forms.Label();
             this.txtName = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.numUDPrice = new System.Windows.Forms.NumericUpDown();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.rbFalse = new System.Windows.Forms.RadioButton();
             this.rbTrue = new System.Windows.Forms.RadioButton();
+            this.rbFalse = new System.Windows.Forms.RadioButton();
             this.btnDone = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numUDPrice)).BeginInit();
@@ -96,17 +97,6 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Taxable";
             // 
-            // rbFalse
-            // 
-            this.rbFalse.AutoSize = true;
-            this.rbFalse.Location = new System.Drawing.Point(6, 19);
-            this.rbFalse.Name = "rbFalse";
-            this.rbFalse.Size = new System.Drawing.Size(86, 17);
-            this.rbFalse.TabIndex = 0;
-            this.rbFalse.TabStop = true;
-            this.rbFalse.Text = "Non-Taxable";
-            this.rbFalse.UseVisualStyleBackColor = true;
-            // 
             // rbTrue
             // 
             this.rbTrue.AutoSize = true;
@@ -117,6 +107,17 @@
             this.rbTrue.TabStop = true;
             this.rbTrue.Text = "Taxable";
             this.rbTrue.UseVisualStyleBackColor = true;
+            // 
+            // rbFalse
+            // 
+            this.rbFalse.AutoSize = true;
+            this.rbFalse.Location = new System.Drawing.Point(6, 19);
+            this.rbFalse.Name = "rbFalse";
+            this.rbFalse.Size = new System.Drawing.Size(86, 17);
+            this.rbFalse.TabIndex = 0;
+            this.rbFalse.TabStop = true;
+            this.rbFalse.Text = "Non-Taxable";
+            this.rbFalse.UseVisualStyleBackColor = true;
             // 
             // btnDone
             // 
@@ -154,6 +155,7 @@
             this.Controls.Add(this.txtName);
             this.Controls.Add(this.label1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "ItemForm";

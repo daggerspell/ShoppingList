@@ -291,10 +291,12 @@ namespace Grampys_Shopping_List
 
         private void printOrShareShoppingListToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            
             previewDialog.Document = this.printDoc;
-            DialogResult results = previewDialog.ShowDialog();
-            if (results == DialogResult.OK)
-                previewDialog.Close();
+            previewDialog.PrintPreviewControl.Zoom = 1.0f;
+            Form previewDialogForm = previewDialog as Form;
+            previewDialogForm.WindowState = FormWindowState.Maximized;
+            DialogResult results = previewDialogForm.ShowDialog();
         }
 
         private int[] FindColumnWidths(Graphics gr, Font headerFont, Font bodyFont, string [] headers, List<ShoppingListItem> values)
