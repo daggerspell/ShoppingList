@@ -35,6 +35,25 @@ namespace Grampys_Shopping_List
             InitializeComponent();
 
             //TODO: after initialize load Item into fields
+            txtName.Text = currentItem.Name;
+            numUDPrice.Value = currentItem.Price;
+            if(currentItem.Taxable)
+            {
+                rbTrue.Checked = true;
+            }
+            else
+            {
+                rbFalse.Checked = true;
+            }
+        }
+
+        private void btnDone_Click(object sender, EventArgs e)
+        {
+            bool taxable = false;
+            if (rbTrue.Checked)
+                taxable = true;
+            currentItem = null;
+            currentItem = new Item(txtName.Text, "", numUDPrice.Value, taxable, "");
         }
     }
 }

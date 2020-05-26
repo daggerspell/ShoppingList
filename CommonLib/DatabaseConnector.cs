@@ -78,7 +78,44 @@ namespace CommonLib
             return ConfigurationManager.ConnectionStrings[id].ConnectionString;
         }
 
-        
+        public void UpdateRecord(Item updateItem)
+        {
+            using (IDbConnection con = new SQLiteConnection(LoadConnectionString()))
+            {
+                con.Open();
+                if(updateItem != null)
+                {
+                    using (var command = con.CreateCommand())
+                    {
+                        command.CommandTimeout = 0;
+                        //UPDATE table_name SET column1 = value1, column2 = value2...., columnN = valueN WHERE[condition];
+                        command.CommandText = "UPDATE item SET name=@Name,price=@Price,description=@Description,taxable=@Taxable,islelocation=@IsleLocation WHERE name=@Name";
+                        command.Parameters.Add(new SQLiteParameter("@Name", updateItem.Name));
+                        command.Parameters.Add(new SQLiteParameter("@Price", updateItem.Price));
+                        command.Parameters.Add(new SQLiteParameter("@Description", updateItem.Description));
+                        command.Parameters.Add(new SQLiteParameter("@Taxable", updateItem.Taxable));
+                        command.Parameters.Add(new SQLiteParameter("@IsleLocation", updateItem.IsleLocation));
 
+                        command.ExecuteNonQuery();
+                    }
+                }
+            }
+        }
+
+        public void RemoveRecord(Item item)
+        {
+            using(IDbConnection con = new SQLiteConnection(LoadConnectionString()))
+            {
+                con.Open();
+                using (var command = con.CreateCommand())
+                {
+                    command.CommandTimeout = 0;
+                    command.CommandText = "DELETE FROM item WHERE name=@Name";
+                    command.Parameters.Add(new SQLiteParameter("@Name", item.Name));
+
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
     }
 }
