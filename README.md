@@ -1,9 +1,9 @@
 # Shopping List
 Simple Program to create, save and print a shopping list
 
-How to import items from excel spread sheet.
+How to import items from CSV.
 the following is the format of the spread sheet:
-||Item Name||Price||Taxable||
+ItemName,Price,Taxable
 
 The item name must be unquie
 Price is expected to be numrical without the dollar sign. Meaning 4.88 not $4.88
